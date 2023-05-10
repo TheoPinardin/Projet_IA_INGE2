@@ -4,24 +4,12 @@ import cv2
 import mediapipe as mp
 import pyautogui
 
-
 # Using mediapipe to set up hand recognition
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=2)
 
-played = False
-
-"""
-def play_pause():
-    global played
-    if played:
-        pyautogui.hotkey('space')
-    else:
-        pyautogui.hotkey('space')
-        played = True
-"""
 
 def distance(a, b):
     return abs(a - b)
@@ -49,12 +37,14 @@ def action(p):
     if p == "thumb_up":
         pyautogui.hotkey('space')
     elif p == "open_hand":
-        pyautogui.hotkey('ctrl', 'q')
-        # exit(0)
+        pyautogui.hotkey('s')
     elif p == "zero_hand":
         pyautogui.hotkey('m')
     elif p == "victory_hand":
         pyautogui.hotkey('right')
+    elif p == "fist_hand":
+        pyautogui.hotkey('ctrl', 'q')
+        # exit(0)
 
 
 def thumb_up(handLandmarks):
@@ -62,7 +52,8 @@ def thumb_up(handLandmarks):
         and handLandmarks[8].x > handLandmarks[6].x \
         and handLandmarks[12].x > handLandmarks[10].x \
         and handLandmarks[16].x > handLandmarks[14].x \
-        and handLandmarks[20].x > handLandmarks[18].x
+        and handLandmarks[20].x > handLandmarks[18].x \
+        and handLandmarks[17].x < handLandmarks[0].x
 
 
 def open_hand(handLandmarks):
@@ -70,7 +61,8 @@ def open_hand(handLandmarks):
         and handLandmarks[8].y < handLandmarks[6].y \
         and handLandmarks[12].y < handLandmarks[10].y \
         and handLandmarks[16].y < handLandmarks[14].y \
-        and handLandmarks[20].y < handLandmarks[18].y
+        and handLandmarks[20].y < handLandmarks[18].y \
+        and handLandmarks[17].x > handLandmarks[0].x
 
 
 def zero_hand(handLandmarks):
@@ -79,7 +71,8 @@ def zero_hand(handLandmarks):
         and handLandmarks[7].y < handLandmarks[8].y \
         and handLandmarks[12].y < handLandmarks[10].y \
         and handLandmarks[16].y < handLandmarks[14].y \
-        and handLandmarks[20].y < handLandmarks[18].y
+        and handLandmarks[20].y < handLandmarks[18].y \
+        and handLandmarks[17].x > handLandmarks[0].x
 
 
 def victory_hand(handLandmarks):
@@ -87,7 +80,18 @@ def victory_hand(handLandmarks):
         and handLandmarks[8].y < handLandmarks[6].y \
         and handLandmarks[12].y < handLandmarks[10].y \
         and handLandmarks[16].y > handLandmarks[14].y \
-        and handLandmarks[20].y > handLandmarks[18].y
+        and handLandmarks[20].y > handLandmarks[18].y \
+        and handLandmarks[17].x > handLandmarks[0].x
+
+
+def fist_hand(handLandmarks):
+    return distance(handLandmarks[4].x, handLandmarks[10].x) < 0.03 \
+        and distance(handLandmarks[4].y, handLandmarks[10].y) < 0.03 \
+        and handLandmarks[8].y > handLandmarks[6].y \
+        and handLandmarks[12].y > handLandmarks[10].y \
+        and handLandmarks[16].y > handLandmarks[14].y \
+        and handLandmarks[20].y > handLandmarks[18].y \
+        and handLandmarks[17].x > handLandmarks[0].x
 
 
 def event_loop():
@@ -116,6 +120,8 @@ def event_loop():
                     position("zero_hand")
                 elif thumb_up(hand_landmarks.landmark):
                     position("thumb_up")
+                elif fist_hand(hand_landmarks.landmark):
+                    position("fist_hand")
                 elif victory_hand(hand_landmarks.landmark):
                     position("victory_hand")
                 elif open_hand(hand_landmarks.landmark):
@@ -158,5 +164,3 @@ subprocess.Popen([vlc_path, media_file])
 event_loop()
 cap.release()
 cv2.destroyAllWindows()
-
-
