@@ -41,7 +41,7 @@ def action(p):
     elif p == "zero_hand":
         pyautogui.hotkey('m')
     elif p == "victory_hand":
-        pyautogui.hotkey('right')
+        pyautogui.hotkey('alt', 'right')
     elif p == "fist_hand":
         pyautogui.hotkey('ctrl', 'q')
         # exit(0)
